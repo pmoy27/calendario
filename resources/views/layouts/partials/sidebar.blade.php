@@ -19,15 +19,7 @@
 
                <li class="menu-title">Menu</li>
 
-               <li class="nav-item">
-                    <a class="nav-link" href="">
-                         <span class="nav-icon">
-                              <iconify-icon icon="solar:widget-2-outline"></iconify-icon>
-                         </span>
-                         <span class="nav-text"> Dashboard </span>
-                         <span class="badge bg-primary badge-pill text-end">New</span>
-                    </a>
-               </li>
+
                <li class="nav-item">
                     <a class="nav-link" href="{{ route( 'calendario') }}">
                          <span class="nav-icon">
