@@ -11,11 +11,11 @@ class="authentication-bg"
                     <div class="card-body p-5">
                         <div class="text-center">
                             <div class="mx-auto mb-4 text-center auth-logo">
-                                <a href="<?php echo e(route('any', 'index')); ?>" class="logo-dark">
+                                <a href="" class="logo-dark">
                                     <img src="/images/logomunihazul.png" height="60" alt="logo dark">
                                 </a>
 
-                                <a href="<?php echo e(route('any', 'index')); ?>" class="logo-light">
+                                <a href="" class="logo-light">
                                     <img src="/images/logomunihblanco.png" height="60" alt="logo light">
                                 </a>
                             </div>

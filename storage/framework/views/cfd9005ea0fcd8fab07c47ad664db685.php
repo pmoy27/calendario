@@ -1,10 +1,8 @@
-@extends('layouts.base', ['subtitle' => 'Sign Up'])
-
-@section('body-attribuet')
+<?php $__env->startSection('body-attribuet'); ?>
 class="authentication-bg"
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="account-pages py-5">
     <div class="container">
         <div class="row justify-content-center">
@@ -27,8 +25,8 @@ class="authentication-bg"
                                 </p>
                         </div>
 
-                        <form method="POST" action="{{url('/register')}}">
-                            @csrf
+                        <form method="POST" action="<?php echo e(url('/register')); ?>">
+                            <?php echo csrf_field(); ?>
                             <div class="mb-3">
                                 <label class="form-label" for="example-name">Name</label>
                                 <input type="name" id="name" name="name" class="form-control"
@@ -53,11 +51,12 @@ class="authentication-bg"
                     </div>
                 </div>
                 <p class="text-center mt-4 text-white text-opacity-50">I already have an account
-                    <a href="{{ route('login') }}"
+                    <a href="<?php echo e(route('login')); ?>"
                         class="text-decoration-none text-white fw-bold">Sign In</a>
                 </p>
             </div>
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.base', ['subtitle' => 'Sign Up'], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /Users/pablooyarzo/Desktop/Proyectos/agenda/resources/views/auth/signup.blade.php ENDPATH**/ ?>

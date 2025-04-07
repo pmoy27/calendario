@@ -1,13 +1,13 @@
 <div class="app-sidebar">
      <!-- Sidebar Logo -->
      <div class="logo-box">
-          <a href="<?php echo e(route('any', 'index')); ?>" class="logo-dark">
+          <a href="" class="logo-dark">
                <img src="/images/escudoazul.png" class="logo-sm" alt="logo sm">
                <img src="/images/logomunihazul.png" class="logo-lg" width="160" height="40" alt="logo light">
 
           </a>
 
-          <a href="<?php echo e(route('any', 'index')); ?>" class="logo-light">
+          <a href="" class="logo-light">
                <img src="/images/escudoblanco.png" class="logo-sm" alt="logo sm">
                <img src="/images/logomunihblanco.png" class="logo-lg" width="160" height="40" alt="logo dark">
           </a>
@@ -20,7 +20,7 @@
                <li class="menu-title">Menu</li>
 
                <li class="nav-item">
-                    <a class="nav-link" href="<?php echo e(route('any', 'index')); ?>">
+                    <a class="nav-link" href="">
                          <span class="nav-icon">
                               <iconify-icon icon="solar:widget-2-outline"></iconify-icon>
                          </span>
@@ -29,7 +29,7 @@
                     </a>
                </li>
                <li class="nav-item">
-                    <a class="nav-link" href="<?php echo e(route('any', 'calendario')); ?>">
+                    <a class="nav-link" href="<?php echo e(route( 'calendario')); ?>">
                          <span class="nav-icon">
                               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" style="fill: rgba(0, 0, 0, 1);">
                                    <path d="M7 11h2v2H7zm0 4h2v2H7zm4-4h2v2h-2zm0 4h2v2h-2zm4-4h2v2h-2zm0 4h2v2h-2z"></path>

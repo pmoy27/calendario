@@ -49,11 +49,15 @@
 
                               <div class="dropdown-divider my-1"></div>
 
-                              <a class="dropdown-item text-danger" href="<?php echo e(route ('second' , ['auth','signin'])); ?>">
-                                   <iconify-icon icon="solar:logout-3-outline"
-                                        class="align-middle me-2 fs-18"></iconify-icon><span
-                                        class="align-middle">Cerrar Sesión</span>
+                              <a class="dropdown-item text-danger" href="<?php echo e(route('logout')); ?>"
+                                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                   <iconify-icon icon="solar:logout-3-outline" class="align-middle me-2 fs-18"></iconify-icon>
+                                   <span class="align-middle">Cerrar Sesión</span>
                               </a>
+
+                              <form id="logout-form" action="<?php echo e(route('logout')); ?>" method="POST" style="display: none;">
+                                   <?php echo csrf_field(); ?>
+                              </form>
                          </div>
                     </div>
                </div>

@@ -27,8 +27,31 @@
     background-color: #0056b3;
   }
 </style>
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+<script>
+  function confirmarEliminacion() {
+    if (confirm('¿Está seguro que desea eliminar este evento?')) {
+      // Copiar el ID del formulario de edición al formulario de eliminación
+      document.getElementById('delete_id').value = document.getElementById('edit_id').value;
+      // Enviar el formulario de eliminación
+      document.getElementById('formEliminar').submit();
+    }
+  }
 
+  document.addEventListener('DOMContentLoaded', function() {
+    // Código para cargar los horarios (el que ya tienes)
+    const fechaInput = document.getElementById('edit_fecha');
+    const horaSelect = document.getElementById('edit_hora');
+
+    // Resto de tu código de carga de horarios...
+
+    // Asegúrate de que el select de hora no esté deshabilitado cuando se envía el formulario
+    document.getElementById('formModificar').addEventListener('submit', function() {
+      document.getElementById('edit_hora').disabled = false;
+    });
+  });
+</script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const calendarEl = document.getElementById('calendar');
@@ -51,7 +74,7 @@
                 'titulo' => $evento->titulo,
                 'telefono' => $evento->telefono,
                 'nombre' => $evento->nombre,
-                'tipo_atencion' => $evento->id, // ID del tipo de atención
+                'tipo_atencion' => $evento->tipo_id, // ID del tipo de atención
                 'hora_inicio' => $evento->hora_inicio
             ]
         ];
@@ -177,10 +200,16 @@
           // Llamar a la función para cargar horarios y seleccionar la hora actual
           cargarHorariosDisponibles(fecha, props.hora_inicio);
         }
+        document.getElementById('btnEliminar').setAttribute('data-event-id', evento.id);
+        document.getElementById('btnEliminar').href = "{{ url('/events/delete') }}/" + evento.id;
+
 
         // Mostrar modal de edición
         const modal = new bootstrap.Modal(document.getElementById('editarEventoModal'));
         modal.show();
+
+        // Agregar confirmación al botón
+
       },
       events: eventosCalendario
     });
@@ -323,31 +352,140 @@
   });
 </script>
 
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Configuración para el botón Modificar
+    document.getElementById('btnModificar').addEventListener('click', function() {
+      // Obtener todos los valores del formulario
+      const eventoId = document.getElementById('edit_id').value;
+      const titulo = document.getElementById('edit_titulo').value;
+      const telefono = document.getElementById('edit_telefono').value;
+      const tipoAtencion = document.getElementById('edit_tipo_atencion').value;
+      const fecha = document.getElementById('edit_fecha').value;
+      const hora = document.getElementById('edit_hora').value;
 
-<div class="modal fade" id="editarEventoModal" tabindex="-1" aria-labelledby="editarEventoModallLabel"
-  aria-hidden="true">
+      // Validación básica
+      if (!eventoId || !titulo || !telefono || !tipoAtencion || !fecha || !hora) {
+        alert('Por favor complete todos los campos');
+        return;
+      }
+
+      // Confirmar antes de actualizar
+      if (confirm('¿Desea guardar los cambios?')) {
+        // Usar fetch para hacer la solicitud de actualización
+        fetch('/events/update', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({
+              id: eventoId,
+              titulo: titulo,
+              telefono: telefono,
+              tipo_atencion: tipoAtencion,
+              fecha: fecha,
+              hora: hora
+            })
+          })
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error('Error en la respuesta del servidor');
+            }
+          })
+          .then(data => {
+            if (data.success) {
+              // Cerrar modal
+              bootstrap.Modal.getInstance(document.getElementById('editarEventoModal')).hide();
+
+              // Mostrar mensaje de éxito
+              alert('Evento actualizado correctamente');
+
+              // Recargar la página después de un breve retraso
+              setTimeout(() => {
+                window.location.reload();
+              }, 300);
+            } else {
+              alert('Error al actualizar evento: ' + (data.message || 'Error desconocido'));
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('Error al procesar la solicitud');
+          });
+      }
+    });
+  });
+</script>
+<script>
+  document.getElementById('btnEliminar').addEventListener('click', function(e) {
+    e.preventDefault();
+
+    const eventoId = this.getAttribute('data-event-id');
+
+    if (!eventoId) {
+      alert('No se pudo determinar qué evento eliminar');
+      return;
+    }
+
+    // Añadir confirmación antes de eliminar
+    if (confirm('¿Está seguro que desea eliminar este evento?')) {
+      fetch('/events/delete/' + eventoId, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+          },
+          body: JSON.stringify({
+            _method: 'DELETE'
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          alert('Evento eliminado correctamente');
+
+          // Cerrar modal
+          bootstrap.Modal.getInstance(document.getElementById('editarEventoModal')).hide();
+
+          // Recargar la página
+          window.location.reload();
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Ocurrió un error al procesar la solicitud');
+        });
+    }
+  });
+</script>
+
+
+<div class="modal fade" id="editarEventoModal" tabindex="-1" aria-labelledby="editarEventoModallLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form action="{{url('/events/create')}}" method="post">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editarEventoModalLabel">Modificar Agenda</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <!-- Formulario principal para modificar -->
+      <form id="formModificar" action="{{url('/events/update')}}" method="post">
         @csrf
-        <div class="modal-header">
-          <h5 class="modal-title" id="editarEventoModalLabel">Modifcar Agendar</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"
-            aria-label="Close"></button>
-        </div>
         <div class="modal-body">
-          <input type="text" name="edit_id" id="edit_id" class="form-control" hidden>
+          <input type="hidden" name="id" id="edit_id">
+
           <div class="mb-3">
             <label for="simpleinput" class="form-label">Nombre Completo</label>
-            <input type="text" name="edit_titulo" id="edit_titulo" class="form-control " required>
+            <input type="text" name="titulo" id="edit_titulo" class="form-control" required>
           </div>
           <div class="mb-3">
             <label for="simpleinput" class="form-label">Teléfono</label>
-            <input type="text" name="edit_telefono" id="edit_telefono" class="form-control" required>
+            <input type="text" name="telefono" id="edit_telefono" class="form-control" required>
           </div>
           <div class="mb-3">
             <label for="tipo_atencion" class="form-label">Tipo de Atención</label>
-            <select name="edit_tipo_atencion" id="edit_tipo_atencion" class="form-control" required>
+            <select name="tipo_atencion" id="edit_tipo_atencion" class="form-control" required>
               <option value="">Seleccione una atención</option>
               @foreach($tipo as $tipos)
               <option value="{{$tipos->id}}">{{$tipos->nombre}}</option>
@@ -356,24 +494,30 @@
           </div>
           <div class="mb-3">
             <label for="simpleinput" class="form-label">Fecha de la Reserva</label>
-            <input type="date" name="edit_fecha" id="edit_fecha" class="form-control" required>
+            <input type="date" name="fecha" id="edit_fecha" class="form-control" required>
           </div>
           <div class="mb-3">
             <label for="hora" class="form-label">Hora de la Reserva</label>
-            <select name="edit_hora" id="edit_hora" class="form-control" disabled required>
+            <select name="hora" id="edit_hora" class="form-control" required>
               <option value="">Seleccione una fecha primero</option>
             </select>
           </div>
         </div>
 
         <div class="modal-footer">
+          <a href="#" id="btnEliminar" class="btn btn-danger">Eliminar</a>
 
-          <button type="submit" class="btn btn-primary">Modificar</button>
+
+          <button type="button" id="btnModificar" class="btn btn-primary">Modificar</button>
         </div>
+      </form>
+
+
+
     </div>
-    </form>
   </div>
 </div>
+
 @endsection
 
 @section('scripts')

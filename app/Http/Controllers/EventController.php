@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Http\Controllers\Controller;
+use App\Models\Tipo;
 use Illuminate\Container\Attributes\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB as FacadesDB;
 
 class EventController extends Controller
 {
@@ -15,9 +17,14 @@ class EventController extends Controller
      */
     public function index()
     {
-        return view('calendario');
-    }
+        $event = FacadesDB::table('events')
+            ->join('tipos', 'tipos.id', '=', 'events.tipo_id')
+            ->select('events.id', 'events.titulo', 'events.telefono', 'events.fecha_inicio', 'tipos.nombre', 'events.hora_inicio', 'tipos.id as tipo_id')
+            ->get();
 
+        $tipo = Tipo::all();
+        return view('calendario', compact('event', 'tipo'));
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -79,16 +86,55 @@ class EventController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Event $event)
+    public function update(Request $request)
     {
-        //
-    }
+        try {
+            $data = $request->json()->all();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Event $event)
+            $evento = Event::findOrFail($data['id']);
+            $evento->titulo = $data['titulo'];
+            $evento->telefono = $data['telefono'];
+            $evento->tipo_id = $data['tipo_atencion'];
+            $evento->fecha_inicio = $data['fecha'] . ' ' . $data['hora'];
+            $evento->hora_inicio = $data['hora'];
+            $evento->fecha_fin = $data['fecha'] . ' ' . $data['hora'];
+            $evento->user_id = auth::user()->id;
+            $evento->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Evento actualizado correctamente'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function deleteEvent(Request $request)
     {
-        //
+        try {
+            $evento = Event::findOrFail($request->id);
+            $evento->delete();
+
+            return redirect()->route('calendario')->with('success', 'Evento eliminado correctamente');
+        } catch (\Exception $e) {
+            return redirect()->route('calendario')->with('error', 'Error al eliminar evento: ' . $e->getMessage());
+        }
+    }
+    public function destroy($id)
+    {
+        try {
+            $evento = Event::findOrFail($id);
+            $evento->delete();
+
+            return redirect()->route('calendario')->with('success', 'Evento eliminado correctamente');
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }
