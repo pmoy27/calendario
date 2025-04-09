@@ -12,48 +12,42 @@ class="authentication-bg"
                         <div class="text-center">
                             <div class="mx-auto mb-4 text-center auth-logo">
                                 <a href="" class="logo-dark">
-                                    <img src="/images/logo-dark.png" height="32" alt="logo dark">
+                                    <img src="/images/logomunihazul.png" height="60" alt="logo dark">
                                 </a>
 
                                 <a href="" class="logo-light">
-                                    <img src="/images/logo-light.png" height="28" alt="logo light">
+                                    <img src="/images/logomunihblanco.png" height="60" alt="logo light">
                                 </a>
                             </div>
-                            <h4 class="fw-bold text-dark mb-2">Sign Up</h3>
-                                <p class="text-muted">New to our platform? Sign up now! It only takes a
-                                    minute.
-                                </p>
+                            <h4 class="fw-bold text-dark mb-2">Registro de Usuario</h3>
+
                         </div>
 
-                        <form method="POST" action="<?php echo e(url('/register')); ?>">
+                        <form method="POST" action="<?php echo e(route('register')); ?>">
                             <?php echo csrf_field(); ?>
                             <div class="mb-3">
-                                <label class="form-label" for="example-name">Name</label>
+                                <label class="form-label" for="example-name">Nombre</label>
                                 <input type="name" id="name" name="name" class="form-control"
-                                    placeholder="Enter your name">
+                                    placeholder="">
                             </div>
                             <div class="mb-3">
-                                <label class="form-label" for="example-email">Email</label>
+                                <label class="form-label" for="example-email">Correo</label>
                                 <input type="email" id="email" name="email" class="form-control"
-                                    placeholder="Enter your email">
+                                    placeholder="">
                             </div>
                             <div class="mb-3">
-                                <label class="form-label" for="example-password">Password</label>
-                                <input type="text" id="password" name="password" class="form-control"
-                                    placeholder="Enter your password">
+                                <label class="form-label" for="example-password">Contraseña</label>
+                                <input type="password" id="password" name="password" class="form-control"
+                                    placeholder="">
                             </div>
 
                             <div class="mb-1 text-center d-grid">
-                                <button class="btn btn-dark btn-lg fw-medium" type="submit">Sign
-                                    Up</button>
+                                <button class="btn btn-dark btn-lg fw-medium" type="submit">Registrar Usuario</button>
                             </div>
                         </form>
                     </div>
                 </div>
-                <p class="text-center mt-4 text-white text-opacity-50">I already have an account
-                    <a href="<?php echo e(route('login')); ?>"
-                        class="text-decoration-none text-white fw-bold">Sign In</a>
-                </p>
+
             </div>
         </div>
     </div>
