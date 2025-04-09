@@ -14,17 +14,12 @@ class TiposAtencion extends Seeder
     public function run(): void
     {
         $atencion = [
-            'Primera Licencia',
-            'Renovacion Licencia',
-            'Ampliacion Licencia',
-            'Control',
-            'Licencia clase B',
-            'Licencia clase A1',
-            'Licencia clase A2',
-            'Licencia clase C',
-            'Licencia clase D',
-            'Licencia clase E',
-            'Licencia clase F',
+
+            'Primera Licencia (2)',
+
+
+            'Control (2)',
+
         ];
 
         foreach ($atencion as $tipo) {

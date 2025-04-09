@@ -21,7 +21,7 @@ class EventController extends Controller
             ->join('tipos', 'tipos.id', '=', 'events.tipo_id')
             ->select('events.id', 'events.titulo', 'events.telefono', 'events.fecha_inicio', 'tipos.nombre', 'events.hora_inicio', 'tipos.id as tipo_id')
             ->get();
-
+        $usuario = auth::user()->id;
         $tipo = Tipo::all();
         return view('calendario', compact('event', 'tipo'));
     }
